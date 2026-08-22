@@ -5,19 +5,37 @@ import { useBooklet } from "@/lib/useBooklet";
 import { PerforatedStrip } from "./PerforatedStrip";
 import { Modal } from "./Modal";
 
-const HISTORY_PAGE_SIZE = 10;
+const HISTORY_PAGE_SIZE = 5;
+
+const ACCENT = {
+  amber: {
+    text: "text-accent",
+    bg: "bg-accent text-background",
+    hoverBorderText: "hover:border-accent hover:text-accent",
+    hoverText: "hover:text-accent",
+  },
+  teal: {
+    text: "text-accent2",
+    bg: "bg-accent2 text-background",
+    hoverBorderText: "hover:border-accent2 hover:text-accent2",
+    hoverText: "hover:text-accent2",
+  },
+} as const;
 
 export function TicketBooklet({
   title,
   storageKey,
   quickAmounts,
   allowUndo,
+  color,
 }: {
   title: string;
   storageKey: string;
   quickAmounts: number[];
   allowUndo: boolean;
+  color: "amber" | "teal";
 }) {
+  const c = ACCENT[color];
   const { state, total, subtract, add, reset, resetWithStartDate } = useBooklet(storageKey);
   const [customAmount, setCustomAmount] = useState("");
   const [confirmReset, setConfirmReset] = useState(false);
@@ -58,10 +76,9 @@ export function TicketBooklet({
   return (
     <section className="w-full max-w-md rounded-2xl border border-dashed border-muted/40 bg-surface p-6 sm:p-8">
       <div className="mb-6 text-center">
-        <p className="text-xs uppercase tracking-widest text-muted">Inicio de tiquetera</p>
-        <p className="mt-1 font-mono text-2xl font-bold text-accent">
-          {formattedStartCapitalized}
-        </p>
+        <h2 className={`font-mono text-2xl font-bold ${c.text}`}>{title}</h2>
+        <p className="mt-3 text-xs uppercase tracking-widest text-muted">Inicio de tiquetera</p>
+        <p className="font-mono text-sm text-foreground">{formattedStartCapitalized}</p>
         <input
           type="date"
           value={state.startDate}
@@ -70,17 +87,13 @@ export function TicketBooklet({
         />
       </div>
 
-      <h2 className="text-center font-mono text-sm uppercase tracking-widest text-muted">
-        {title}
-      </h2>
-
       <div className="mt-5">
-        <PerforatedStrip total={total} remaining={state.remaining} low={low} />
+        <PerforatedStrip total={total} remaining={state.remaining} low={low} color={color} />
       </div>
 
       <p
         className={`mt-6 text-center font-mono text-6xl font-bold ${
-          low ? "text-danger" : "text-accent"
+          low ? "text-danger" : c.text
         }`}
       >
         {state.remaining}
@@ -94,7 +107,7 @@ export function TicketBooklet({
           <button
             key={n}
             onClick={() => setPendingAmount(n)}
-            className="rounded-md border border-dashed border-muted/40 px-3 py-2 font-mono text-sm text-foreground hover:border-accent hover:text-accent"
+            className={`rounded-md border border-dashed border-muted/40 px-3 py-2 font-mono text-sm text-foreground ${c.hoverBorderText}`}
           >
             -{n}
           </button>
@@ -102,14 +115,14 @@ export function TicketBooklet({
         {allowUndo && (
           <button
             onClick={() => add(1)}
-            className="rounded-md border border-dashed border-muted/40 px-3 py-2 font-mono text-sm text-muted hover:border-accent hover:text-accent"
+            className={`rounded-md border border-dashed border-muted/40 px-3 py-2 font-mono text-sm text-muted ${c.hoverBorderText}`}
           >
             +1
           </button>
         )}
       </div>
 
-      <div className="mt-4 flex justify-center gap-2">
+      <div className="mt-4 flex flex-wrap justify-center gap-2">
         <input
           type="number"
           min={1}
@@ -120,7 +133,7 @@ export function TicketBooklet({
         />
         <button
           onClick={handleCustomSubtract}
-          className="rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-background"
+          className={`rounded-md px-3 py-1.5 text-sm font-medium ${c.bg}`}
         >
           Restar
         </button>
@@ -132,39 +145,43 @@ export function TicketBooklet({
         </button>
       </div>
 
-      {state.history.length > 0 && (
-        <div className="mt-6 border-t border-dashed border-muted/30 pt-4">
-          <ul className="space-y-1 font-mono text-xs text-muted">
-            {historySlice.map((m, i) => (
+      <div className="mt-6 border-t border-dashed border-muted/30 pt-4">
+        <ul className="h-24 space-y-1 font-mono text-xs text-muted">
+          {historySlice.length > 0 ? (
+            historySlice.map((m, i) => (
               <li key={historyPage * HISTORY_PAGE_SIZE + i} className="flex justify-between">
                 <span>{m.date}</span>
                 <span>-{m.amount}</span>
               </li>
-            ))}
-          </ul>
-          {historyPageCount > 1 && (
-            <div className="mt-3 flex items-center justify-between font-mono text-xs text-muted">
-              <button
-                onClick={() => setHistoryPage((p) => Math.max(0, p - 1))}
-                disabled={historyPage === 0}
-                className="disabled:opacity-30 hover:text-accent"
-              >
-                ← Anteriores
-              </button>
-              <span>
-                {historyPage + 1} / {historyPageCount}
-              </span>
-              <button
-                onClick={() => setHistoryPage((p) => Math.min(historyPageCount - 1, p + 1))}
-                disabled={historyPage >= historyPageCount - 1}
-                className="disabled:opacity-30 hover:text-accent"
-              >
-                Siguientes →
-              </button>
-            </div>
+            ))
+          ) : (
+            <li className="text-center">Sin movimientos</li>
           )}
+        </ul>
+        <div
+          className={`mt-3 flex items-center justify-between font-mono text-xs text-muted ${
+            historyPageCount > 1 ? "" : "invisible"
+          }`}
+        >
+          <button
+            onClick={() => setHistoryPage((p) => Math.max(0, p - 1))}
+            disabled={historyPage === 0}
+            className={`disabled:opacity-30 ${c.hoverText}`}
+          >
+            ← Anteriores
+          </button>
+          <span>
+            {historyPage + 1} / {historyPageCount}
+          </span>
+          <button
+            onClick={() => setHistoryPage((p) => Math.min(historyPageCount - 1, p + 1))}
+            disabled={historyPage >= historyPageCount - 1}
+            className={`disabled:opacity-30 ${c.hoverText}`}
+          >
+            Siguientes →
+          </button>
         </div>
-      )}
+      </div>
 
       {pendingAmount !== null && (
         <Modal
