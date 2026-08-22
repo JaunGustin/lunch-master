@@ -8,6 +8,7 @@ export default function Home() {
       <div className="flex w-full max-w-4xl flex-col items-center gap-10 md:flex-row md:items-start md:justify-center">
         <TicketBooklet
           title="Almuerzos"
+          costLabel="Costo: 255.000 COP (30 unds)"
           storageKey="tiquetera-almuerzos"
           quickAmounts={[1, 2, 3, 4, 5]}
           allowUndo
@@ -15,6 +16,7 @@ export default function Home() {
         />
         <TicketBooklet
           title="Domicilios"
+          costLabel="Costo: 150.000 COP el domicilio al mes (30 unds)"
           storageKey="tiquetera-domicilios"
           quickAmounts={[1, 2, 3, 4, 5]}
           allowUndo

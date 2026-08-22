@@ -24,12 +24,14 @@ const ACCENT = {
 
 export function TicketBooklet({
   title,
+  costLabel,
   storageKey,
   quickAmounts,
   allowUndo,
   color,
 }: {
   title: string;
+  costLabel: string;
   storageKey: string;
   quickAmounts: number[];
   allowUndo: boolean;
@@ -77,6 +79,7 @@ export function TicketBooklet({
     <section className="w-full max-w-md rounded-2xl border border-dashed border-muted/40 bg-surface p-6 sm:p-8">
       <div className="mb-6 text-center">
         <h2 className={`font-mono text-2xl font-bold ${c.text}`}>{title}</h2>
+        <p className="mt-1 text-xs text-foreground">{costLabel}</p>
         <p className="mt-3 text-xs uppercase tracking-widest text-muted">Inicio de tiquetera</p>
         <p className="font-mono text-sm text-foreground">{formattedStartCapitalized}</p>
         <input
@@ -141,12 +144,12 @@ export function TicketBooklet({
 
       <div className="mt-6 text-center text-xs">
         <button onClick={() => setConfirmReset(true)} className="text-danger hover:underline">
-          Reiniciar tiquetera
+          Reiniciar
         </button>
       </div>
 
       <div className="mt-6 border-t border-dashed border-muted/30 pt-4">
-        <ul className="h-24 space-y-1 font-mono text-xs text-muted">
+        <ul className="h-24 space-y-1 font-mono text-xs text-foreground">
           {historySlice.length > 0 ? (
             historySlice.map((m, i) => (
               <li key={historyPage * HISTORY_PAGE_SIZE + i} className="flex justify-between">
@@ -210,7 +213,7 @@ export function TicketBooklet({
 
       {confirmReset && (
         <Modal
-          title="Reiniciar tiquetera"
+          title="Reiniciar"
           message="Esto vuelve el contador a 30, borra el historial y fija el inicio a hoy. ¿Continuar?"
           confirmLabel="Reiniciar"
           danger
