@@ -199,7 +199,7 @@ export function TicketBooklet({
       {pendingDate !== null && (
         <Modal
           title="Cambiar fecha de inicio"
-          message="Cambiar la fecha de inicio reinicia la tiquetera a 30 y borra el historial. ¿Continuar?"
+          message="Cambiar la fecha de inicio reinicia la tiquetera a 28 y borra el historial. ¿Continuar?"
           confirmLabel="Cambiar y reiniciar"
           danger
           onConfirm={() => {
@@ -214,7 +214,7 @@ export function TicketBooklet({
       {confirmReset && (
         <Modal
           title="Reiniciar"
-          message="Esto vuelve el contador a 30, borra el historial y fija el inicio a hoy. ¿Continuar?"
+          message="Esto vuelve el contador a 28, borra el historial y fija el inicio a hoy. ¿Continuar?"
           confirmLabel="Reiniciar"
           danger
           onConfirm={() => {

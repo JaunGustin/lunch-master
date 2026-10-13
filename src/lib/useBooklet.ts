@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { todayBogota } from "./colombiaDate";
 
-const TOTAL = 30;
+const TOTAL = 28;
 
 export type Movement = { date: string; amount: number };
 
